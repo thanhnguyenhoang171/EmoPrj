@@ -1,6 +1,7 @@
 env
 myenv
 myenv\Scripts\activate.bat
+.env
 
 # Logs
 logs
