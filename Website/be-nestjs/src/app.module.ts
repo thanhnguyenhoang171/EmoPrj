@@ -23,6 +23,7 @@ import { UsersModule } from './users/users.module';
           connection.on('disconnected', () => console.log('Databasse is disconnected'));
           connection.on('reconnected', () => console.log('Databasse is reconnected'));
           connection.on('disconnecting', () => console.log('Databasse is disconnecting'));
+          
           return connection;
         },
       }),

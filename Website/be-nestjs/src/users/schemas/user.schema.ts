@@ -26,6 +26,20 @@ export class User {
         _id: mongoose.Schema.Types.ObjectId;
         name: string;
     }
+
+
+    @Prop({ type: Object })
+    createdBy: {
+        _id: mongoose.Schema.Types.ObjectId;
+        name: string;
+    }
+
+
+    @Prop({ type: Object })
+    deletedBy: {
+        _id: mongoose.Schema.Types.ObjectId;
+        name: string;
+    }
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

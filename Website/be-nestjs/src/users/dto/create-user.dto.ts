@@ -10,4 +10,8 @@ export class CreateUserDto {
     @IsString({ message: 'Mật khẩu phải là chuỗi' })
     @IsNotEmpty({ message: 'Mật khẩu không được để trống' })
     password: string;
+
+    @IsString({ message: 'Role phải là chuỗi' })
+    role: string
+    
 }
