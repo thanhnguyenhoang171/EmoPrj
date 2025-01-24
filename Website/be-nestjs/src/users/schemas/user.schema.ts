@@ -40,6 +40,9 @@ export class User {
         _id: mongoose.Schema.Types.ObjectId;
         name: string;
     }
+
+    @Prop()
+    createdAt: Date
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

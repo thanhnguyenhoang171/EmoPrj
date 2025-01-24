@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, RegisterUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
@@ -133,5 +133,32 @@ export class UsersService {
       }
       throw new InternalServerErrorException("Lỗi máy chủ nội bộ")
     }
+  }
+
+  // Create a funct use for auth
+  updateUserToken = async (refreshToken: string, _id: string) => {
+    return await this.userModel.updateOne(
+      { _id },
+      {
+        refreshToken
+      }
+    )
+  }
+
+  // create funct regist a new user -- use for auth
+  async register(user: RegisterUserDto) {
+    const { name, email, password } = user;
+    //add logic check email
+    const isExist = await this.userModel.findOne({ email });
+    if (isExist) {
+      throw new BadRequestException(`Email: ${email} đã tồn tại trên hệ thống. Vui lòng sử dụng email khác.`)
+    }
+    const hashPassword = await this.hashPassword(password);
+    let newRegister = await this.userModel.create({
+      name, email,
+      password: hashPassword,
+    })
+    return newRegister;
+
   }
 }

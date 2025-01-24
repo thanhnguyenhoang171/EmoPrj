@@ -6,6 +6,7 @@ import { User } from 'src/decorator/user.decorator';
 import { IUser } from './users.interface';
 import { ResponseMessage } from 'src/decorator/response.decorator';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { Public } from 'src/decorator/auth_global.decorator';
 
 
 @Controller('users')
@@ -13,7 +14,6 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Post()
-  @UseGuards(JwtAuthGuard)  
   @ResponseMessage("Create a new user")
   create(
     @Body() createUserDto: CreateUserDto,
@@ -22,7 +22,9 @@ export class UsersController {
     return this.usersService.create(createUserDto, user);
   }
 
+
   @Get()
+  @Public()
   @ResponseMessage("Fetch all users with pagination")
   findAll(
     @Query("current") currentPage: number,
