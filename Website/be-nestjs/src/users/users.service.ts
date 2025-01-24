@@ -7,6 +7,9 @@ import { User, UserDocument } from './schemas/user.schema';
 import aqp from 'api-query-params';
 import { IUser } from './users.interface';
 import mongoose from 'mongoose';
+import * as bcrypt from 'bcrypt';
+
+
 
 @Injectable()
 export class UsersService {
@@ -14,12 +17,28 @@ export class UsersService {
     @InjectModel(User.name) private readonly userModel: SoftDeleteModel<UserDocument>
   ) { }
 
-  async create(createUserDto: CreateUserDto,) {
+
+  async hashPassword(password: string) {
+    let salt = await bcrypt.genSalt(10);
+    let hashed_password = await bcrypt.hash(password, salt)
+    return hashed_password;
+  }
+
+  async create(createUserDto: CreateUserDto, user: IUser) {
     const { name, email, password, role } = createUserDto;
-    const createdUser = await this.userModel.create({
-      name, email, password, role
-    });
-    return createdUser;
+    try {
+      let hashed_password = await this.hashPassword(password);
+      const result = await this.userModel.create({
+        name, email, password: hashed_password, role, createdBy: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+        }
+      });
+      return result;
+    } catch (error) {
+      throw new InternalServerErrorException("Lỗi máy chủ nội bộ")
+    }
   }
 
   async findAll(currentPage: number, limit: number, qs: string) {
@@ -58,13 +77,7 @@ export class UsersService {
 
   async findOne(_id: string) {
     try {
-      if (!mongoose.Types.ObjectId.isValid(_id)) {
-        throw new BadRequestException("ID không hợp lệ!")
-      }
-      const result = await this.userModel.findById(_id);
-      if (!result) {
-        throw new NotFoundException("Không tìm thấy người dùng này!")
-      }
+      const result = await this.checkExistUser(_id);
       return result;
     } catch (error) {
       if (error instanceof NotFoundException || error instanceof BadRequestException) {
@@ -75,19 +88,42 @@ export class UsersService {
     }
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async findOneByEmail(email: string) {
+    const result = (await this.userModel.findOne({ email }));
+    return result;
+  }
+
+  // Function check exist user
+  async checkExistUser(_id: string) {
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      throw new BadRequestException("ID không hợp lệ!");
+    }
+    const user = await this.userModel.findOne({ _id });
+    if (!user) {
+      throw new NotFoundException("User này không tồn tại!");
+    }
+    return user;
+  }
+
+  async update(_id: string, updateUserDto: UpdateUserDto) {
+    try {
+      await this.checkExistUser(_id)
+
+      const result = await this.userModel.updateOne({ _id }, {
+        ...updateUserDto
+      })
+      return result;
+    } catch (error) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException("Lỗi máy chủ nội bộ")
+    }
   }
 
   async remove(_id: string) {
     try {
-      if (!mongoose.Types.ObjectId.isValid(_id)) {
-        throw new BadRequestException("ID không hợp lệ!")
-      }
-      const user = this.findOne(_id);
-      if (!user) {
-        throw new NotFoundException("Người dùng này không tồn tại!")
-      }
+      await this.checkExistUser(_id);
       const result = await this.userModel.softDelete({ _id });
       return result;
 
