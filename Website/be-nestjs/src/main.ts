@@ -5,6 +5,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import {TransformInterceptor } from './core/transform.interceptor'
 import { JwtAuthGuard } from './auth/guard/jwt-auth.guard';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
 
@@ -15,6 +16,9 @@ async function bootstrap() {
 
   // config Global Pipes
   app.useGlobalPipes(new ValidationPipe());
+
+  //config cookies
+  app.use(cookieParser());
 
   // Config global auth guard
   app.useGlobalGuards(new JwtAuthGuard(reflector))

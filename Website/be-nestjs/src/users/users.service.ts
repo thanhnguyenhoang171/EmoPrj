@@ -161,4 +161,9 @@ export class UsersService {
     return newRegister;
 
   }
+
+  // Create funct to find an user by refresh token -- use for auth
+  async findUserByRefreshToken(refreshToken: string) {
+    return await this.userModel.findOne({ refreshToken });
+  }
 }
