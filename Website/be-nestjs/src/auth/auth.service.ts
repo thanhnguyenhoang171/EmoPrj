@@ -1,77 +1,65 @@
-
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
-import * as bcrypt from 'bcrypt';
+import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { access } from 'fs';
 import { IUser } from 'src/users/users.interface';
-import { Response } from 'express';
+import { RegisterUserDto } from 'src/users/dto/create-user.dto';
 import { ConfigService } from '@nestjs/config';
 import * as ms from 'ms';
-import { RegisterUserDto } from 'src/users/dto/create-user.dto';
+
+import { Response } from 'express';
+import { RolesService } from 'src/roles/roles.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         private usersService: UsersService,
-        private readonly jwtService: JwtService,
-        private configService: ConfigService
+        private jwtService: JwtService,
+        private configService: ConfigService,
+        private rolesService: RolesService
     ) { }
 
+    //ussername/ pass là 2 tham số thư viện passport nó ném về
     async validateUser(username: string, pass: string): Promise<any> {
-        const user = await this.usersService.findOneByEmail(username);
+        const user = await this.usersService.findOneByUsername(username);
+        if (user) {
+            const isValid = this.usersService.isValidPassword(pass, user.password);
+            if (isValid === true) {
+                const userRole = user.role as unknown as { _id: string; name: string }
+                const temp = await this.rolesService.findOne(userRole._id);
 
-        // encode password
-        const isValidPassword = await bcrypt.compare(pass, user.password)
-        if (isValidPassword) {
-            // Check valid username
-            if (username === user.email) {
-                return user;
+                const objUser = {
+                    ...user.toObject(),
+                    permissions: temp?.permissions ?? []
+                }
+
+                return objUser;
             }
         }
 
         return null;
     }
 
-    // generate refresh token
-    createRefreshToken = (payload: any) => {
-        const refresh_token = this.jwtService.sign(payload,
-            {
-                secret: this.configService.get<string>("REFRESH_SECRET_KEY"),
-                expiresIn: ms(this.configService.get<string>("REFRESH_TOKEN_EXPIRE")) / 1000,
-            }
-        );
-        return refresh_token;
-    }
-
-    // SignIn and generate access_token
-    async signIn(user: IUser, response: Response) {
-        const { _id, name, email, role } = user;
-
-        // Customize Payload
+    async login(user: IUser, response: Response) {
+        const { _id, name, email, role, permissions } = user;
         const payload = {
-            sub: "SignIn Token",
-            iss: "From Server",
+            sub: "token login",
+            iss: "from server",
             _id,
             name,
             email,
-            role
-        }
+            role,
+        };
 
-        // Initial refresh token 
         const refresh_token = this.createRefreshToken(payload);
 
-        // Update user with refresh token -- in User Module
+        //update user with refresh token
         await this.usersService.updateUserToken(refresh_token, _id);
 
-       
-
+        //set refresh_token as cookies
         response.cookie('refresh_token', refresh_token, {
             httpOnly: true,
-            maxAge: ms(this.configService.get<string>('REFRESH_TOKEN_EXPIRE')),
-            sameSite: 'strict', // Chống tấn công CSRF
+            maxAge: ms(this.configService.get<string>("JWT_REFRESH_EXPIRE"))
         })
-
 
         return {
             access_token: this.jwtService.sign(payload),
@@ -79,34 +67,39 @@ export class AuthService {
                 _id,
                 name,
                 email,
-                role
-            }
-        }
+                role,
+                permissions
+            },
+        };
     }
-    // create funct allow regist a new user
-    async registryUser(user: RegisterUserDto) {
-        const registUser = await this.usersService.register(user);
+
+    async register(user: RegisterUserDto) {
+        let newUser = await this.usersService.register(user);
 
         return {
-            _id: registUser?._id,
-            createdAt: registUser?.createdAt
-        }
+            _id: newUser?._id,
+            createdAt: newUser?.createdAt
+        };
     }
 
-    // Create new access token by refresh token
+    createRefreshToken = (payload: any) => {
+        const refresh_token = this.jwtService.sign(payload, {
+            secret: this.configService.get<string>("JWT_REFRESH_TOKEN_SECRET"),
+            expiresIn: ms(this.configService.get<string>("JWT_REFRESH_EXPIRE")) / 1000
+        });
+        return refresh_token;
+    }
+
     processNewToken = async (refreshToken: string, response: Response) => {
         try {
-            // authentication refresh token - encode refresh token
             this.jwtService.verify(refreshToken, {
-                secret: this.configService.get<string>("REFRESH_SECRET_KEY")
-            });
-            // find an user by token
-            let user = await this.usersService.findUserByRefreshToken(refreshToken);
+                secret: this.configService.get<string>("JWT_REFRESH_TOKEN_SECRET")
+            })
+            let user = await this.usersService.findUserByToken(refreshToken);
             if (user) {
                 const { _id, name, email, role } = user;
-                // initial payload
                 const payload = {
-                    sub: "refresh token",
+                    sub: "token refresh",
                     iss: "from server",
                     _id,
                     name,
@@ -114,43 +107,46 @@ export class AuthService {
                     role
                 };
 
-                // create new refresh token
                 const refresh_token = this.createRefreshToken(payload);
 
-                //update user with new refresh token
+                //update user with refresh token
                 await this.usersService.updateUserToken(refresh_token, _id.toString());
 
-                // set new refresh token to cookies
+                //fetch user's role
+                const userRole = user.role as unknown as { _id: string; name: string }
+                const temp = await this.rolesService.findOne(userRole._id)
+
+                //set refresh_token as cookies
                 response.clearCookie("refresh_token");
 
-                response.cookie("refresh_token", refresh_token, {
+                response.cookie('refresh_token', refresh_token, {
                     httpOnly: true,
-                    maxAge: ms(this.configService.get<string>("REFRESH_TOKEN_EXPIRE")),
-                    sameSite: 'strict', // Chống tấn công CSRF
-                });
+                    maxAge: ms(this.configService.get<string>("JWT_REFRESH_EXPIRE"))
+                })
+
 
                 return {
-                    access_token: this.jwtService.sign(payload), // sign again access token to remain login
+                    access_token: this.jwtService.sign(payload),
                     user: {
                         _id,
                         name,
                         email,
-                        role
+                        role,
+                        permissions: temp?.permissions ?? []
                     }
-                }
-            }
-            else {
-                throw new BadRequestException("Refresh token không hợp lệ. Vui lòng đăng nhập lại");
+                };
+            } else {
+                throw new BadRequestException(`Refresh token không hợp lệ. Vui lòng login.`)
             }
         } catch (error) {
-            throw new BadRequestException("Refresh token không hợp lệ. Vui lòng đăng nhập lại")
+            throw new BadRequestException(`Refresh token không hợp lệ. Vui lòng login.`)
         }
     }
 
-    // Define funct to logout
     logout = async (response: Response, user: IUser) => {
         await this.usersService.updateUserToken("", user._id);
         response.clearCookie("refresh_token");
         return "ok";
     }
+
 }

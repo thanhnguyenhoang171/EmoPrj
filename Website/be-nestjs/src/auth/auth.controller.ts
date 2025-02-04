@@ -1,55 +1,60 @@
-
-import { Body, Controller, Post, HttpCode, HttpStatus, Req, UseGuards, Get, Res } from '@nestjs/common';
+import { Controller, Post, UseGuards, Req, Body, Res, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ResponseMessage } from 'src/decorator/response.decorator';
+
 import { Request, Response } from 'express';
-import { LocalAuthGuard } from './guard/local-auth.guard';
-import { Public } from 'src/decorator/auth_global.decorator';
-import { RegisterUserDto } from 'src/users/dto/create-user.dto';
 import { IUser } from 'src/users/users.interface';
+import { RolesService } from 'src/roles/roles.service';
+import { Public } from 'src/decorator/auth_global.decorator';
+import { LocalAuthGuard } from './guard/local-auth.guard';
+import { ResponseMessage } from 'src/decorator/response.decorator';
+import { RegisterUserDto } from 'src/users/dto/create-user.dto';
 import { User } from 'src/decorator/user.decorator';
 
 
-@Controller('auth')
+@Controller("auth")
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(
+    private authService: AuthService,
+    private rolesService: RolesService
 
-  @Post('login')
+  ) { }
+
   @Public()
   @UseGuards(LocalAuthGuard)
-  @HttpCode(HttpStatus.OK)
-  @ResponseMessage("User signIn")
-  async signIn(
+  @Post('/login')
+  @ResponseMessage("User Login")
+  handleLogin(
     @Req() req,
-    @Res({ passthrough: true }) response: Response
-  ) {
-    return this.authService.signIn(req.user, response);
+    @Res({ passthrough: true }) response: Response) {
+    return this.authService.login(req.user, response);
   }
 
-  @Post('/register')
   @Public()
-  @ResponseMessage("Regist a new user")
-  async registry(
-    @Body() registerUserDto: RegisterUserDto
-  ) {
-    return this.authService.registryUser(registerUserDto);
+  @ResponseMessage("Register a new user")
+  @Post('/register')
+  handleRegister(@Body() registerUserDto: RegisterUserDto) {
+    return this.authService.register(registerUserDto);
   }
 
-  //route for remain login session
+  @ResponseMessage("Get user information")
+  @Get('/account')
+  async handleGetAccount(@User() user: IUser) {
+    const temp = await this.rolesService.findOne(user.role._id) as any;
+    user.permissions = temp.permissions;
+    return { user };
+  }
+
   @Public()
   @ResponseMessage("Get User by refresh token")
   @Get('/refresh')
-  handleRefreshToken(
-    @Req() request: Request,
-    @Res({ passthrough: true }) response: Response) {
+  handleRefreshToken(@Req() request: Request, @Res({ passthrough: true }) response: Response) {
     const refreshToken = request.cookies["refresh_token"];
     return this.authService.processNewToken(refreshToken, response);
   }
 
-
-  @Post("/logout")
-  @ResponseMessage("Logout user")
-  handleUserLogout(
+  @ResponseMessage("Logout User")
+  @Post('/logout')
+  handleLogout(
     @Res({ passthrough: true }) response: Response,
     @User() user: IUser
   ) {

@@ -38,8 +38,16 @@ async function bootstrap() {
     }
   );
 
+  // Config CORS
+  app.enableCors({
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    credentials: true,
+  })
+
   // Config host, port
-  const port = configService.get<string>('PORT') || 3001;
+  const port = configService.get<string>('PORT') || 3002;
   const host = configService.get<string>('HOST')
 
   // Start application

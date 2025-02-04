@@ -1,11 +1,16 @@
-
-import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+    ExecutionContext,
+    ForbiddenException,
+    Injectable,
+    UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-import { IS_PUBLIC_KEY } from 'src/decorator/auth_global.decorator';
+import { Request } from 'express';
+import { IS_PUBLIC_KEY, IS_PUBLIC_PERMISSION } from 'src/decorator/auth_global.decorator';
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') { 
+export class JwtAuthGuard extends AuthGuard('jwt') {
     constructor(private reflector: Reflector) {
         super();
     }
@@ -21,11 +26,28 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         return super.canActivate(context);
     }
 
-    handleRequest(err, user) {
+    handleRequest(err, user, info, context: ExecutionContext) {
+        const request: Request = context.switchToHttp().getRequest();
+        const PublicPermission = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_PERMISSION, [
+            context.getHandler(),
+            context.getClass(),
+        ]);
         // You can throw an exception based on either "info" or "err" arguments
         if (err || !user) {
-            throw err || new UnauthorizedException("Access token hết hiệu lực hoặc không đúng định dạng!");
+            throw err || new UnauthorizedException("Token không hợp lệ or không có token ở Bearer Token ở Header request!");
         }
+        const targetMethod = request.method;
+        const targetEndpoint = request.route?.path as string;
+        const permissions = user?.permissions ?? [];
+
+        let isExist = permissions.find(permissions => targetMethod === permissions.method && targetEndpoint === permissions.path)
+        if (targetEndpoint.startsWith('/api/v1/auth')) {
+            isExist = true;
+        }
+        if (!isExist && !PublicPermission) {
+            throw new ForbiddenException("Bạn không có quyền truy cập endpoint này");
+        }
+
         return user;
     }
 }

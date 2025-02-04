@@ -1,12 +1,8 @@
-
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 
-/*
-    The purpose of this file is asign information of User into request.user
-*/ 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
     constructor(private authService: AuthService) {
@@ -16,8 +12,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     async validate(username: string, password: string): Promise<any> {
         const user = await this.authService.validateUser(username, password);
         if (!user) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException("Username/password không hợp lệ!");
         }
-        return user; 
+        return user; //req.user
     }
 }

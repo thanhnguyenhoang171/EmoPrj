@@ -1,56 +1,54 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from 'src/decorator/user.decorator';
+
 import { IUser } from './users.interface';
 import { ResponseMessage } from 'src/decorator/response.decorator';
-import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { User } from 'src/decorator/user.decorator';
 import { Public } from 'src/decorator/auth_global.decorator';
 
-
-@Controller('users')
+@Controller('users') // => /users
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Post()
-  @ResponseMessage("Create a new user")
-  create(
-    @Body() createUserDto: CreateUserDto,
-    @User() user: IUser
-  ) {
-    return this.usersService.create(createUserDto, user);
+  @ResponseMessage("Create a new User")
+  async create(@Body() hoidanit: CreateUserDto, @User() user: IUser) {
+    let newUser = await this.usersService.create(hoidanit, user);
+    return {
+      _id: newUser?._id,
+      createdAt: newUser?.createdAt
+    };
   }
 
-
   @Get()
-  @Public()
-  @ResponseMessage("Fetch all users with pagination")
+  @ResponseMessage("Fetch user with paginate")
   findAll(
-    @Query("current") currentPage: number,
-    @Query("pageSize") limit: number,
-    @Query() qs: string
-  ) {
+    @Query("current") currentPage: string,
+    @Query("pageSize") limit: string,
+    @Query() qs: string,) {
     return this.usersService.findAll(+currentPage, +limit, qs);
   }
 
+  @Public()
   @Get(':id')
-  @ResponseMessage("Get a user by id")
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+  @ResponseMessage("Fetch user by id")
+  async findOne(@Param('id') id: string) {
+    const foundUser = await this.usersService.findOne(id);
+    return foundUser;
   }
 
-  @Patch(':id')
-  @ResponseMessage("Update a user")
-  update(
-    @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  @ResponseMessage("Update a User")
+  @Patch()
+  async update(@Body() updateUserDto: UpdateUserDto, @User() user: IUser) {
+    let updatedUser = await this.usersService.update(updateUserDto, user);
+    return updatedUser;
   }
 
-  @Delete(':id')
-  @ResponseMessage("Delete a user by id")
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
-  }
+  // @Delete(':id')
+  // @ResponseMessage("Delete a User")
+  // remove(@Param('id') id: string, @User() user: IUser) {
+  //   return this.usersService.remove(id, user);
+  // }
 }

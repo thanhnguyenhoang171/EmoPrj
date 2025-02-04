@@ -29,7 +29,10 @@ export class PermissionsService {
       }
     })
 
-    return newPermission;
+    return {
+      _id: newPermission?._id,
+      createdAt: newPermission?.createdAt
+    };
 
   }
 

@@ -15,5 +15,5 @@ export class CreateRoleDto {
     @IsNotEmpty({ message: "Quyền hạn không được để trống" })
     @IsMongoId({ each: true, message: "Mỗi quyền hạn phải là MongoObjectID" })
     @IsArray({ message: "Quyền hạn có định dạng là một mảng" })
-    permission: mongoose.Schema.Types.ObjectId[];
+    permissions: mongoose.Schema.Types.ObjectId[];
 }
