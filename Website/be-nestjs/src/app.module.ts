@@ -10,6 +10,10 @@ import { AuthModule } from './auth/auth.module';
 import { RolesModule } from './roles/roles.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { DatabasesModule } from './databases/databases.module';
+import { TypesModule } from './types/types.module';
+import { RatingModule } from './ratings/ratings.module';
+import { ProductModule } from './products/products.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -41,6 +45,10 @@ import { DatabasesModule } from './databases/databases.module';
     RolesModule,
     PermissionsModule,
     DatabasesModule,
+    TypesModule,
+    RatingModule,
+    ProductModule,
+    FilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

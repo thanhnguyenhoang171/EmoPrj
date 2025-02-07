@@ -40,9 +40,9 @@ export class UsersController {
   }
 
   @ResponseMessage("Update a User")
-  @Patch()
-  async update(@Body() updateUserDto: UpdateUserDto, @User() user: IUser) {
-    let updatedUser = await this.usersService.update(updateUserDto, user);
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @User() user: IUser) {
+    let updatedUser = await this.usersService.update(id, updateUserDto, user);
     return updatedUser;
   }
 

@@ -12,6 +12,7 @@ import aqp from 'api-query-params';
 
 import { Role, RoleDocument } from 'src/roles/schemas/role.schema';
 import { User } from 'src/decorator/user.decorator';
+import { RolesService } from 'src/roles/roles.service';
 
 @Injectable()
 export class UsersService {
@@ -21,7 +22,9 @@ export class UsersService {
     private userModel: SoftDeleteModel<UserDocument>,
 
     @InjectModel(Role.name)
-    private roleModel: SoftDeleteModel<RoleDocument>
+    private roleModel: SoftDeleteModel<RoleDocument>,
+
+    // private rolesService: RolesService
   ) { }
 
 
@@ -48,7 +51,7 @@ export class UsersService {
     let newUser = await this.userModel.create({
       name, email,
       password: hashPassword,
-       role,
+      role,
       createdBy: {
         _id: user._id,
         email: user.email
@@ -139,10 +142,19 @@ export class UsersService {
     return compareSync(password, hash);
   }
 
-  async update(updateUserDto: UpdateUserDto, user: IUser) {
 
+  async update(_id: string, updateUserDto: UpdateUserDto, user: IUser) {
+
+  
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      throw new BadRequestException("Id user không hợp lệ")
+    }
+    // const userRole = await this.rolesService.findOne(user.role._id );
+
+    const { name, email, role, isActive } = updateUserDto;
+    
     const updated = await this.userModel.updateOne(
-      { _id: updateUserDto._id },
+      { _id },
       {
         ...updateUserDto,
         updatedBy: {
@@ -152,6 +164,7 @@ export class UsersService {
       });
     return updated;
   }
+
 
   // async remove(id: string, user: IUser) {
 

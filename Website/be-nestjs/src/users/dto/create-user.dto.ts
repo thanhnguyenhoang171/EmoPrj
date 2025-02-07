@@ -1,4 +1,5 @@
-import { IsString, IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsEmail, IsNotEmpty, IsOptional, IsMongoId } from 'class-validator';
+import mongoose from 'mongoose';
 export class CreateUserDto {
     @IsString({ message: 'Tên phải là chuỗi' })
     @IsNotEmpty({ message: 'Tên không được để trống' })
@@ -11,8 +12,10 @@ export class CreateUserDto {
     @IsNotEmpty({ message: 'Mật khẩu không được để trống' })
     password: string;
 
-    @IsString({ message: 'Role phải là chuỗi' })
-    role: string
+
+    @IsNotEmpty({ message: 'Role không được để trống', })
+    @IsMongoId({ message: 'Role có định dạng là mongo id', })
+    role: mongoose.Schema.Types.ObjectId;
 
 }
 

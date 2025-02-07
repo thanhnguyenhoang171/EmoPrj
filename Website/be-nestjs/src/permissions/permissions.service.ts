@@ -17,6 +17,13 @@ export class PermissionsService {
 
   async create(createPermissionDto: CreatePermissionDto, user: IUser) {
     const { name, path, method, module } = createPermissionDto;
+
+    const isExist = await this.permissionModel.findOne({ path, method });
+    if (isExist)
+    {
+      throw new BadRequestException(`Permission với apiPath=${path} , method=${method} đã tồn tại!`)
+    }
+
     let newPermission = await this.permissionModel.create({
       name,
       path,

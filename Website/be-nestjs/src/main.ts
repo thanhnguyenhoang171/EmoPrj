@@ -6,6 +6,7 @@ import { ValidationPipe, VersioningType } from '@nestjs/common';
 import {TransformInterceptor } from './core/transform.interceptor'
 import { JwtAuthGuard } from './auth/guard/jwt-auth.guard';
 import * as cookieParser from 'cookie-parser';
+import { join } from 'path';
 
 async function bootstrap() {
 
@@ -28,6 +29,9 @@ async function bootstrap() {
 
   // Config custom response message with interceptor
   app.useGlobalInterceptors(new TransformInterceptor(reflector))
+
+  // Config public file
+  app.useStaticAssets(join(__dirname, '..', 'public'));
 
   // Config version
   app.setGlobalPrefix("api")
