@@ -2,7 +2,7 @@ env
 myenv
 myenv\Scripts\activate.bat
 .env
-
+images
 # Logs
 logs
 *.log
