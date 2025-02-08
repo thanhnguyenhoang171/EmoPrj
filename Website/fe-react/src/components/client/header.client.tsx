@@ -1,13 +1,20 @@
 import { useState, useEffect } from "react";
 import {
+    ArrowRightOutlined,
+    ClusterOutlined,
     CodeOutlined,
     CoffeeOutlined,
     ContactsOutlined,
     DashOutlined,
+    HomeOutlined,
     LogoutOutlined,
     MenuFoldOutlined,
     RiseOutlined,
+    SettingOutlined,
+    ShoppingCartOutlined,
+    TagsOutlined,
     TwitterOutlined,
+    UserSwitchOutlined,
 } from "@ant-design/icons";
 import { Avatar, Drawer, Dropdown, MenuProps, Space, message } from "antd";
 import { Menu, ConfigProvider } from "antd";
@@ -44,17 +51,17 @@ const Header = (props: any) => {
         {
             label: <Link to={"/"}>Trang Chủ</Link>,
             key: "/",
-            icon: <TwitterOutlined />,
+            icon: <HomeOutlined />,
         },
         {
             label: <Link to={"/product"}>Sản phẩm</Link>,
             key: "/product",
-            icon: <CodeOutlined />,
+            icon: <TagsOutlined />,
         },
         {
             label: <Link to={"/type"}>Loại sản phẩm</Link>,
             key: "/type",
-            icon: <RiseOutlined />,
+            icon: <ClusterOutlined />,
         },
     ];
 
@@ -82,12 +89,12 @@ const Header = (props: any) => {
                 </label>
             ),
             key: "manage-account",
-            icon: <ContactsOutlined />,
+            icon: <SettingOutlined />,
         },
         {
             label: <Link to={"/admin"}>Trang Quản Trị</Link>,
             key: "admin",
-            icon: <DashOutlined />,
+            icon: <UserSwitchOutlined />,
         },
         {
             label: (
@@ -99,7 +106,7 @@ const Header = (props: any) => {
                 </label>
             ),
             key: "logout",
-            icon: <LogoutOutlined />,
+            icon: <ArrowRightOutlined />,
         },
     ];
 

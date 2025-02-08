@@ -7,15 +7,18 @@ import {
     callFetchTotalRatings,
     callFetchType,
     callFetchUser,
+    callFetchTotalPositiveRatings,
+    callFetchTotalNegativeRatings,
 } from "@/config/api";
 
 const DashboardPage = () => {
     const [totalRatings, setTotalRatings] = useState<number>(0);
     const [totalUsers, setTotalUsers] = useState<number>(0);
     const [totalProducts, setTotalProducts] = useState<number>(0);
-    // const [totalTypes, setTotalTypes] = useState<number>(0);
+    const [totalTypes, setTotalTypes] = useState<number>(0);
     // const [totalPermissions, setTotalPermissions] = useState<number>(0);
-
+    const [totalPositiveRatings, setTotalPositiveRatings] = useState<number>(0);
+    const [totalNegativeRatings, setTotalNegativeRatings] = useState<number>(0);
     const queryString = "current=0&pageSize=0";
     useEffect(() => {
         const getDashboardData = async () => {
@@ -24,22 +27,32 @@ const DashboardPage = () => {
                     totalExistRatings,
                     totalExistUsers,
                     totalExistProduts,
-                    // totalExistTypes,
+                    totalExistTypes,
                     // totalExistPermissions,
+                    totalExistPositiveRatings,
+                    totalExistNegativeRatings,
                 ] = await Promise.all([
                     callFetchTotalRatings(),
                     callFetchUser(queryString),
                     callFetchProduct(queryString),
-                    // callFetchType(queryString),
+                    callFetchType(queryString),
                     // callFetchPermission(queryString),
+                    callFetchTotalPositiveRatings(),
+                    callFetchTotalNegativeRatings(),
                 ]);
                 setTotalRatings(totalExistRatings.data.totalItems);
                 setTotalUsers(totalExistUsers.data?.meta.total ?? 0);
                 setTotalProducts(totalExistProduts.data?.meta.total ?? 0);
-                // setTotalTypes(totalExistTypes.data?.meta.total ?? 0);
+                setTotalTypes(totalExistTypes.data?.meta.total ?? 0);
                 // setTotalPermissions(
                 //     totalExistPermissions.data?.meta.total ?? 0
                 // );
+                setTotalPositiveRatings(
+                    totalExistPositiveRatings.data?.positiveRatings ?? 0
+                );
+                 setTotalNegativeRatings(
+                     totalExistNegativeRatings.data?.negativeRatings ?? 0
+                 );
             } catch (error) {
                 console.error("Failed to fetch dashboard data:", error);
             }
@@ -85,7 +98,7 @@ const DashboardPage = () => {
                 <Card title="Tổng Loại Sản Phẩm" bordered={false}>
                     <Statistic
                         title="Total Types"
-                        value={1222222} // Example value, replace with real data if needed
+                        value={totalTypes} // Example value, replace with real data if needed
                         formatter={formatter}
                     />
                 </Card>
@@ -97,7 +110,7 @@ const DashboardPage = () => {
                 >
                     <Statistic
                         title="Total Positve Product Ratings"
-                        value={112893} // Example value, replace with real data if needed
+                        value={totalPositiveRatings} // Example value, replace with real data if needed
                         formatter={formatter}
                     />
                 </Card>
@@ -122,12 +135,12 @@ const DashboardPage = () => {
             </Col> */}
             <Col span={24} md={8}>
                 <Card
-                    title="Tổng Sản Phẩm Được Bình Luận Là Tích Cực"
+                    title="Tổng Sản Phẩm Được Ảnh Feedback Là Tiêu Cực"
                     bordered={false}
                 >
                     <Statistic
-                        title="Total Products"
-                        value={122222} // Example value, replace with real data if needed
+                        title="Total Negative Product Ratings"
+                        value={totalNegativeRatings} // Example value, replace with real data if needed
                         formatter={formatter}
                     />
                 </Card>

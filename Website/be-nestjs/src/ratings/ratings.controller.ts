@@ -33,6 +33,18 @@ export class RatingsController {
     return this.ratingsService.findAll(+currentPage, +limit, qs);
   }
 
+  @Get("positive-ratings")
+  @Public()
+  @ResponseMessage("Get total positive rating")
+  getPositiveRatings() {
+    return this.ratingsService.getPositive();
+  }
+  @Get("negative-ratings")
+  @Public()
+  @ResponseMessage("Get total negatice rating")
+  getNegativeRatings() {
+    return this.ratingsService.getNegative();
+  }
   @Get(':id')
   @ResponseMessage("Fetch a user rating by id")
   findOne(@Param('id') id: string) {

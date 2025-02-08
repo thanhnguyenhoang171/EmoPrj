@@ -31,7 +31,7 @@ export const callLogout = () => {
 export const callUploadSingleFile = (file: any, folderType: string) => {
     const bodyFormData = new FormData();
     bodyFormData.append('fileUpload', file);
-    return axios<IBackendRes<{ fileName: string, detectedEmotion: { class: string; confidenceScore: number }[] }>>({
+    return axios<IBackendRes<{ fileName: string }>>({
         method: 'post',
         url: '/api/v1/files/upload',
         data: bodyFormData,
@@ -42,6 +42,19 @@ export const callUploadSingleFile = (file: any, folderType: string) => {
     });
 }
 
+export const callUploadSingleFileFeedback = (file: any, folderType: string) => {
+    const bodyFormData = new FormData();
+    bodyFormData.append('fileUpload', file);
+    return axios<IBackendRes<{ fileName: string, detectedEmotion: { class: string; confidenceScore: number }[] }>>({
+        method: 'post',
+        url: '/api/v1/files/upload-feedback',
+        data: bodyFormData,
+        headers: {
+            "Content-Type": "multipart/form-data",
+            "folder_type": folderType
+        },
+    });
+}
 
 
 
@@ -135,7 +148,13 @@ export const callDeleteRating = (id: string) => {
 export const callFetchRating = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<IRating>>>(`/api/v1/ratings?${query}`);
 }
+export const callFetchTotalPositiveRatings = () => {
+    return axios.get(`/api/v1/ratings/positive-ratings`);
+}
 
+export const callFetchTotalNegativeRatings = () => {
+    return axios.get(`/api/v1/ratings/negative-ratings`);
+}
 export const callFetchRatingById = (id: string) => {
     return axios.get<IBackendRes<IRating>>(`/api/v1/ratings/${id}`);
 }

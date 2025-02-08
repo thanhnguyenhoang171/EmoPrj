@@ -13,6 +13,7 @@ import aqp from 'api-query-params';
 import { Role, RoleDocument } from 'src/roles/schemas/role.schema';
 import { User } from 'src/decorator/user.decorator';
 import { RolesService } from 'src/roles/roles.service';
+import { USER_ROLE } from 'src/databases/sample_data';
 
 @Injectable()
 export class UsersService {
@@ -69,7 +70,7 @@ export class UsersService {
     }
 
     //fetch user role
-    const userRole = await this.roleModel.findOne({ name: "NORMAL_USER" });
+    const userRole = await this.roleModel.findOne({ name: USER_ROLE });
 
     const hashPassword = this.getHashPassword(password);
     let newRegister = await this.userModel.create({

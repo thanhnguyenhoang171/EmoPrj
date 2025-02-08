@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { setUserLoginInfo } from '@/redux/slice/accountSlide';
 import styles from 'styles/auth.module.scss';
 import { useAppSelector } from '@/redux/hooks';
+import { AlignCenterOutlined } from '@ant-design/icons';
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -52,9 +53,17 @@ const LoginPage = () => {
                 <div className={styles.container}>
                     <section className={styles.wrapper}>
                         <div className={styles.heading}>
-                            <h2 className={`${styles.text} ${styles["text-large"]}`}>Đăng Nhập</h2>
+                            <h2
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    marginTop: "16px",
+                                }}
+                                className={`${styles.text} ${styles["text-large"]}`}
+                            >
+                                Đăng Nhập
+                            </h2>
                             <Divider />
-
                         </div>
                         <Form
                             name="basic"
@@ -66,7 +75,12 @@ const LoginPage = () => {
                                 labelCol={{ span: 24 }} //whole column
                                 label="Email"
                                 name="username"
-                                rules={[{ required: true, message: 'Email không được để trống!' }]}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Email không được để trống!",
+                                    },
+                                ]}
                             >
                                 <Input />
                             </Form.Item>
@@ -75,7 +89,13 @@ const LoginPage = () => {
                                 labelCol={{ span: 24 }} //whole column
                                 label="Mật khẩu"
                                 name="password"
-                                rules={[{ required: true, message: 'Mật khẩu không được để trống!' }]}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message:
+                                            "Mật khẩu không được để trống!",
+                                    },
+                                ]}
                             >
                                 <Input.Password />
                             </Form.Item>
@@ -83,14 +103,38 @@ const LoginPage = () => {
                             <Form.Item
                             // wrapperCol={{ offset: 6, span: 16 }}
                             >
-                                <Button type="primary" htmlType="submit" loading={isSubmit}>
-                                    Đăng nhập
-                                </Button>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        marginTop: "16px",
+                                    }}
+                                >
+                                    <Button
+                                        style={{
+                                            width: "100px",
+                                            height: "40px",
+                                        }}
+                                        type="primary"
+                                        htmlType="submit"
+                                        loading={isSubmit}
+                                    >
+                                        Đăng nhập
+                                    </Button>
+                                </div>
                             </Form.Item>
-                            <Divider>Or</Divider>
-                            <p className="text text-normal">Chưa có tài khoản ?
+                            <Divider></Divider>
+                            <p
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    marginTop: "16px",
+                                }}
+                                className="text text-normal"
+                            >
+                                Chưa có tài khoản ? &nbsp;
                                 <span>
-                                    <Link to='/register' > Đăng Ký </Link>
+                                    <Link to="/register"> Đăng Ký Ngay </Link>
                                 </span>
                             </p>
                         </Form>
@@ -98,7 +142,7 @@ const LoginPage = () => {
                 </div>
             </main>
         </div>
-    )
+    );
 }
 
 export default LoginPage;

@@ -16,12 +16,24 @@ import * as fs from 'fs';
 
 @Controller('files')
 export class FilesController {
+
+  @Public()
   @Post('upload')
+  @ResponseMessage("Upload Single File")
+  @UseFilters(new HttpExceptionFilter())
+  @UseInterceptors(FileInterceptor('fileUpload'))
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    return {
+      fileName: file.filename
+    }
+  }
+
+  @Post('upload-feedback')
   @Public()
   @ResponseMessage('Upload single file')
   @UseFilters(new HttpExceptionFilter())
   @UseInterceptors(FileInterceptor('fileUpload'))
-  async uploadFile(@UploadedFile() file: Express.Multer.File): Promise<any> {
+  async uploadFileFeedback(@UploadedFile() file: Express.Multer.File): Promise<any> {
     if (!file) {
       throw new BadRequestException('No file uploaded');
     }

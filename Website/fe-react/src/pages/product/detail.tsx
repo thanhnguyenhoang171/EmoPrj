@@ -70,7 +70,7 @@ const ClientProductDetailPage = (props: any) => {
 
                                 <div className={styles["price"]}>
                                     <DollarOutlined />
-                                    <span>
+                                    <span> Giá tiền:
                                         &nbsp;
                                         {(productDetail.price + "")?.replace(
                                             /\B(?=(\d{3})+(?!\d))/g,

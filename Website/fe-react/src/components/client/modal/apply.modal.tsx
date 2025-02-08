@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import enUS from "antd/lib/locale/en_US";
 import { UploadOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
-import { callCreateRating, callUploadSingleFile } from "@/config/api";
+import { callCreateRating, callUploadSingleFileFeedback } from "@/config/api";
 import { useState } from "react";
 import TextArea from "antd/es/input/TextArea";
 
@@ -92,7 +92,7 @@ const ApplyModal = (props: IProps) => {
         multiple: false,
         accept: "image/jpeg,image/png,image/gif,image/bmp,image/webp",
         async customRequest({ file, onSuccess, onError }: any) {
-            const res = await callUploadSingleFile(file, "rating");
+            const res = await callUploadSingleFileFeedback(file, "rating");
             if (res && res.data) {
                 setUrlImage(res.data.fileName);
                 setDetectedEmotions(res.data.detectedEmotion);
@@ -144,7 +144,7 @@ const ApplyModal = (props: IProps) => {
                             <Row gutter={[10, 10]}>
                                 <Col span={24}>
                                     <div>
-                                        Kính chào quý khách, bạn đang đánh giá{" "}
+                                        Kính chào quý khách, bạn đang đánh giá sản phẩm{" "}
                                         <b>{productDetail?.name}</b>
                                     </div>
                                 </Col>

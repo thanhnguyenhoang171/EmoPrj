@@ -9,14 +9,21 @@ $color-gray: #80868b;
 $color-grayish: #dadce0;
 
 $shadow-normal: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-$shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-$shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
 
 .login-page,
 .register-page {
     color: $color-black;
     background: $color-light;
-
+    background: url("../../public/w989joinms961.jpg") no-repeat center center;
+    background-size: cover; /* Hoặc cover, tùy theo ý muốn */
+    background-attachment: fixed; /* Giúp ảnh không cuộn theo trang */
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
 
     // Components
     .container {
@@ -29,7 +36,6 @@ $shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0,
         padding: 0 2rem;
         margin: 0 auto;
     }
-
 
     .text {
         font-family: inherit;
@@ -67,9 +73,9 @@ $shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0,
             width: 100%;
             margin: 2rem auto;
             padding: 2rem 2.5rem;
-            border: none;
+            border: 2px solid black;
             outline: none;
-            border-radius: 0.5rem;
+            border-radius: 1rem;
             color: $color-black;
             background: $color-white;
             box-shadow: $shadow-large;

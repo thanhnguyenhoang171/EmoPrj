@@ -172,4 +172,14 @@ export class RatingsService {
     const totalItems = await this.ratingModel.countDocuments();
     return { totalItems: totalItems };
   }
+
+  async getPositive() {
+    const positiveRatings = (await this.ratingModel.find({ isPositive: "Có" })).length;
+    return { positiveRatings: positiveRatings };
+  }
+
+  async getNegative() {
+    const negativeRatings = (await this.ratingModel.find({ isPositive: "Không" })).length;
+    return { negativeRatings: negativeRatings };
+  }
 }

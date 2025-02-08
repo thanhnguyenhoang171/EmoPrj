@@ -31,16 +31,25 @@ const RegisterPage = () => {
 
 
     return (
-        <div className={styles["register-page"]} >
-
-            <main className={styles.main} >
-                <div className={styles.container} >
-                    <section className={styles.wrapper} >
-                        <div className={styles.heading} >
-                            <h2 className={`${styles.text} ${styles["text-large"]}`}> Đăng Ký Tài Khoản </h2>
-                            < Divider />
+        <div className={styles["register-page"]}>
+            <main className={styles.main}>
+                <div className={styles.container}>
+                    <section className={styles.wrapper}>
+                        <div className={styles.heading}>
+                            <h2
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    marginTop: "16px",
+                                }}
+                                className={`${styles.text} ${styles["text-large"]}`}
+                            >
+                                {" "}
+                                Đăng Ký Tài Khoản{" "}
+                            </h2>
+                            <Divider />
                         </div>
-                        < Form<IUser>
+                        <Form<IUser>
                             name="basic"
                             // style={{ maxWidth: 600, margin: '0 auto' }}
                             onFinish={onFinish}
@@ -50,27 +59,41 @@ const RegisterPage = () => {
                                 labelCol={{ span: 24 }} //whole column
                                 label="Họ tên"
                                 name="name"
-                                rules={[{ required: true, message: 'Họ tên không được để trống!' }]}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Họ tên không được để trống!",
+                                    },
+                                ]}
                             >
                                 <Input />
                             </Form.Item>
 
-
                             <Form.Item
-                                labelCol={{ span: 24 }
-                                } //whole column
+                                labelCol={{ span: 24 }} //whole column
                                 label="Email"
                                 name="email"
-                                rules={[{ required: true, message: 'Email không được để trống!' }]}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Email không được để trống!",
+                                    },
+                                ]}
                             >
-                                <Input type='email' />
+                                <Input type="email" />
                             </Form.Item>
 
                             <Form.Item
                                 labelCol={{ span: 24 }} //whole column
                                 label="Mật khẩu"
                                 name="password"
-                                rules={[{ required: true, message: 'Mật khẩu không được để trống!' }]}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message:
+                                            "Mật khẩu không được để trống!",
+                                    },
+                                ]}
                             >
                                 <Input.Password />
                             </Form.Item>
@@ -82,7 +105,6 @@ const RegisterPage = () => {
                             >
                                 <Input type='number' />
                             </Form.Item> */}
-
 
                             {/* <Form.Item
                                 labelCol={{ span: 24 }} //whole column
@@ -101,7 +123,6 @@ const RegisterPage = () => {
                                 </Select>
                             </Form.Item> */}
 
-
                             {/* <Form.Item
                                 labelCol={{ span: 24 }} //whole column
                                 label="Địa chỉ"
@@ -111,17 +132,38 @@ const RegisterPage = () => {
                                 <Input />
                             </Form.Item> */}
 
-                            < Form.Item
+                            <Form.Item
                             // wrapperCol={{ offset: 6, span: 16 }}
                             >
-                                <Button type="primary" htmlType="submit" loading={isSubmit} >
-                                    Đăng ký
-                                </Button>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        marginTop: "16px",
+                                    }}
+                                >
+                                    <Button
+                                        type="primary"
+                                        htmlType="submit"
+                                        loading={isSubmit}
+                                    >
+                                        Đăng ký
+                                    </Button>
+                                </div>
                             </Form.Item>
-                            <Divider> Or </Divider>
-                            <p className="text text-normal" > Đã có tài khoản ?
+                            <Divider></Divider>
+                            <p
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    marginTop: "16px",
+                                }}
+                                className="text text-normal"
+                            >
+                                {" "}
+                                Đã có tài khoản ? &nbsp;
                                 <span>
-                                    <Link to='/login' > Đăng Nhập </Link>
+                                    <Link to="/login"> Đăng Nhập </Link>
                                 </span>
                             </p>
                         </Form>
@@ -129,7 +171,7 @@ const RegisterPage = () => {
                 </div>
             </main>
         </div>
-    )
+    );
 }
 
 export default RegisterPage;
