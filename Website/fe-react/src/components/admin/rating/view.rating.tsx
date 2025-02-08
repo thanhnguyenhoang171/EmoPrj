@@ -98,7 +98,7 @@ const ViewDetailRating = (props: IProps) => {
                     </Descriptions.Item>
 
                     <Descriptions.Item label="Được đánh giá tốt?">
-                        {dataInit?.isPositive ? "Có" : "Không"}
+                        {dataInit?.isPositive}
                     </Descriptions.Item>
 
                     <Descriptions.Item label="Ngày tạo">

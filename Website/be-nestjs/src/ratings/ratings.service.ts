@@ -22,14 +22,21 @@ export class RatingsService {
     const { url, typeId, productId, comment, detectedEmotion } = createRatingDto;
     const { email, _id } = user;
 
-    console.log("Check detected Emotion = ", detectedEmotion);
-
-   
-    const sortedEmotions = detectedEmotion.sort((a, b) => b.confidenceScore - a.confidenceScore);
-    console.log("Sorted Emotions = ", sortedEmotions);
-
     const negativeEmotions = ['angry', 'disgust', 'fear', 'sad'];
-    const isPositive = !sortedEmotions.some(emotion => negativeEmotions.includes(emotion.class));
+    const threshold = 0.5;
+
+    const sortedEmotions = detectedEmotion.sort((a, b) => b.confidenceScore - a.confidenceScore);
+  
+    // Kiểm tra cảm xúc tích cực và tiêu cực với confidenceScore cao nhất
+    const topPositive = sortedEmotions.find(emotion => !negativeEmotions.includes(emotion.class) && emotion.confidenceScore >= threshold);
+    const topNegative = sortedEmotions.find(emotion => negativeEmotions.includes(emotion.class) && emotion.confidenceScore >= threshold);
+
+    let isPositive = "N/A"; 
+    if (topPositive && (!topNegative || topPositive.confidenceScore > topNegative.confidenceScore)) {
+      isPositive = "Có";
+    } else if (topNegative) {
+      isPositive = "Không";
+    }
 
     console.log("isPositive =", isPositive);
 

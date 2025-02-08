@@ -4,20 +4,24 @@ import face_recognition
 from tensorflow.keras.models import model_from_json
 import os
 
-# Load model structure
-with open(
-    "D:/Chanh Resources/NCKH/EmoPrj/Website/be-nestjs/src/python-model-AI/trainned/FER2013_trainned/adam_flatten/fer2013_Adam_Flatten.json",
-    "r",
-) as json_file:
+base_path = os.path.dirname(os.path.abspath(__file__))  # Đường dẫn thư mục hiện tại
+json_path = os.path.join(
+    base_path,
+    "trainned/FER2013_trainned/adam_flatten/fer2013_Adam_Flatten.json",
+)
+weights_path = os.path.join(
+    base_path,
+    "trainned/FER2013_trainned/adam_flatten/best_model_fer2013_Adam_Flatten.keras",
+)
+
+with open(json_path, "r") as json_file:
     loaded_model_json = json_file.read()
 
 # Load the model
 model = model_from_json(loaded_model_json)
 
 # Load model weights
-model.load_weights(
-    "D:/Chanh Resources/NCKH/EmoPrj/Website/be-nestjs/src/python-model-AI/trainned/FER2013_trainned/adam_flatten/best_model_fer2013_Adam_Flatten.keras"
-)
+model.load_weights(weights_path)
 
 label_dict = {
     0: "angry",

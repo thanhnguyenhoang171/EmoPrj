@@ -25,8 +25,6 @@ export class FilesController {
     if (!file) {
       throw new BadRequestException('No file uploaded');
     }
-
-
     const filePath = path.resolve(file.path); // Chuyển đường dẫn thành dạng tuyệt đối
     console.log("Check file path = ", filePath);
     const pythonOptions = {

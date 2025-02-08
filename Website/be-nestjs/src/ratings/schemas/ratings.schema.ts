@@ -65,7 +65,7 @@ export class Rating {
     status: string;
 
     @Prop()
-    isPositive: boolean;
+    isPositive: string;
 
     @Prop({ type: mongoose.Schema.Types.Array })
     history: {

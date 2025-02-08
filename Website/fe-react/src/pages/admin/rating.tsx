@@ -167,21 +167,6 @@ const RatingPage = () => {
             title: "Đánh giá tốt?",
             dataIndex: "isPositive",
             hideInSearch: true,
-            render: (isPositive) => {
-                if (isPositive === undefined) return "-";
-                return (
-                    <Tag
-                        color={isPositive ? "green" : "red"}
-                        style={{
-                            textAlign: "center",
-                            display: "block",
-                            margin: 2,
-                        }}
-                    >
-                        {isPositive ? "Có" : "Không"}
-                    </Tag>
-                );
-            },
         },
         {
             title: "Trạng Thái",

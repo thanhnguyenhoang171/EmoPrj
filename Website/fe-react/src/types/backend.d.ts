@@ -116,7 +116,7 @@ export interface IRating {
         _id: string;
         name: string;
     };
-    isPostive: boolean;
+    isPostive: string;
     history?: {
         status: string;
         updatedAt: Date;
